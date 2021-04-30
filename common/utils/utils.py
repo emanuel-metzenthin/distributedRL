@@ -7,7 +7,7 @@ import yaml
 from gym.wrappers import TimeLimit
 
 from common.utils.baseline_wrappers import make_atari, wrap_deepmind, wrap_pytorch
-from utils.sign_dataset import SignDataset
+from sign_dataset import SignDataset
 
 
 def read_config(config_path: str):
