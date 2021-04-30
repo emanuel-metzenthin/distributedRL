@@ -1,5 +1,5 @@
 from typing import Deque, Union
-
+from text_localization_environment import TextLocEnv
 import gym
 import numpy as np
 import torch
@@ -7,18 +7,14 @@ import yaml
 from gym.wrappers import TimeLimit
 
 from common.utils.baseline_wrappers import make_atari, wrap_deepmind, wrap_pytorch
+from utils.sign_dataset import SignDataset
 
 
 def read_config(config_path: str):
     with open(config_path, "r") as ymlfile:
         cfg = yaml.load(ymlfile)
 
-    if cfg["atari"] is True:
-        env = make_atari(cfg["env_name"])
-        env = wrap_deepmind(env, frame_stack=True)
-        env = wrap_pytorch(env)
-    else:
-        env = gym.make(cfg["env_name"])
+    env = create_env(cfg["env_name"], cfg["atari"])
 
     cfg["obs_dim"] = env.observation_space.shape
     cfg["action_dim"] = env.action_space.n
@@ -38,8 +34,19 @@ def create_env(env_name: str, atari: bool, max_episode_steps=None):
         env = wrap_deepmind(env, frame_stack=True)
         env = wrap_pytorch(env)
     else:
-        env = gym.make(env_name)
-
+        # env = gym.make(env_name)
+        dataset = SignDataset(path='../../data/600_3_signs_3_words', split='validation')
+        env = TextLocEnv(
+            dataset.images, dataset.gt,
+            playout_episode=False,
+            premasking=True,
+            max_steps_per_image=100,
+            bbox_scaling=0,
+            bbox_transformer='base',
+            ior_marker_type='cross',
+            has_termination_action=False,
+            has_intermediate_reward=False
+        )
     return env
 
 

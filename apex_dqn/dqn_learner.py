@@ -9,7 +9,7 @@ from zmq.sugar.stopwatch import Stopwatch
 from torch.nn.utils import clip_grad_norm_
 
 
-@ray.remote(num_gpus=1)
+@ray.remote(num_gpus=0)
 class DQNLearner(Learner):
     def __init__(self, brain, cfg: dict, comm_config: dict):
         super().__init__(brain, cfg, comm_config)

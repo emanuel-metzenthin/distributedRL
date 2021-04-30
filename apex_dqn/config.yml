@@ -1,12 +1,12 @@
 # Environment parameters
 env_name: PongNoFrameskip-v4 #   CartPole-v1 # LunarLander-v2 #  
-atari: True
+atari: False
 
 # Learning parameters
 model: Apex-DQN
-learner_device: cuda
+learner_device: cpu
 worker_device: cpu
-num_workers: 8
+num_workers: 2
 num_learners: 1
 num_step: 3
 batch_size: 512

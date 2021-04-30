@@ -24,8 +24,9 @@ class DQNWorker(ApeXWorker):
         if np.random.randn() < self.eps_greedy:
             return self.env.action_space.sample()
 
-        state = torch.FloatTensor(state).to(self.device)
-        state = state.unsqueeze(0)
+        # state = torch.FloatTensor(state).to(self.device)
+        # state = state.unsqueeze(0)
+        state = torch.from_numpy(state[0]).unsqueeze(0).to(self.device), torch.from_numpy(state[1]).unsqueeze(0).to(self.device)
         qvals = self.brain.forward(state)
         action = np.argmax(qvals.cpu().detach().numpy())
         return action
@@ -51,7 +52,7 @@ class DQNWorker(ApeXWorker):
                 done = False
 
                 while True:
-                    self.env.render()
+                    # self.env.render(mode="interactive")
                     action = self.select_action(state)
                     transition = self.environment_step(state, action)
                     next_state = transition[-2]

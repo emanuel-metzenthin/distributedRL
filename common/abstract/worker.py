@@ -130,13 +130,16 @@ class ApeXWorker(Worker):
             discounted_reward = reward + self.gamma * discounted_reward
         nstep_data = (state, action, discounted_reward, last_state, done)
 
+        state = torch.from_numpy(state[0]).unsqueeze(0).to(self.device), torch.from_numpy(state[1]).unsqueeze(0).to(self.device)
+        last_state = torch.from_numpy(last_state[0]).unsqueeze(0).to(self.device), torch.from_numpy(last_state[1]).unsqueeze(0).to(self.device)
+
         q_value = self.brain.forward(
-            torch.FloatTensor(state).unsqueeze(0).to(self.device)
+            state
         )[0][action]
 
         bootstrap_q = torch.max(
             self.brain.forward(
-                torch.FloatTensor(last_state).unsqueeze(0).to(self.device)
+                last_state
             ),
             1,
         )
@@ -161,7 +164,7 @@ class ApeXWorker(Worker):
             done = False
             state = self.env.reset()
             while not done:
-                self.env.render()
+                # self.env.render(mode="interactive")
                 action = self.select_action(state)
                 transition = self.environment_step(state, action)
                 next_state = transition[-2]
